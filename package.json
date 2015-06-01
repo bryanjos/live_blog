@@ -1,13 +1,25 @@
 {
-  "repository": {
+  "repository": {},
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sass": "^2.0.1",
+    "jspm": "^0.15.6"
   },
-  "dependencies": {
-    "brunch": "^1.8.1",
-    "babel-brunch": "^5.1.1",
-    "clean-css-brunch": ">= 1.0 < 1.8",
-    "css-brunch": ">= 1.0 < 1.8",
-    "javascript-brunch": ">= 1.0 < 1.8",
-    "sass-brunch": "^1.8.10",
-    "uglify-js-brunch": ">= 1.0 < 1.8"
+  "jspm": {
+    "directories": {
+      "lib": "web/static/js",
+      "packages": "priv/static/jspm_packages"
+    },
+    "configFile": "priv/static/config.js",
+    "dependencies": {},
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.1.13",
+      "babel-runtime": "npm:babel-runtime@^5.1.13",
+      "core-js": "npm:core-js@^0.9.4"
+    }
   }
 }
