@@ -33,3 +33,10 @@ config :live_blog, LiveBlog.Repo,
   password: "postgres",
   database: "live_blog_dev",
   size: 10 # The amount of database connections in the pool
+
+#session
+config :live_blog, LiveBlog.Endpoint,
+  secret_key_base: "fq#j@-wk(v+^mrgw@62$##oz8m##09az@uz06hp-bd!rn@ju8506hp-bd!rn@ju85"
+
+config :phoenix, LiveBlog.Router,
+  session: [store: :cookie, key: "_live_blog_key"]
