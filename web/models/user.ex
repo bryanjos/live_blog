@@ -29,8 +29,31 @@ defmodule LiveBlog.User do
     |> validate_unique(:email, on: LiveBlog.Repo)
   end
 
-  def get(id) do
+  def get_by_id(id) do
     LiveBlog.Repo.get(LiveBlog.User, id)
+  end
+
+  def get(params) do
+    query = from u in LiveBlog.User,
+            where: u.username == ^params["username"] or u.email == ^params["username"],
+            select: u
+    LiveBlog.Repo.one(query)
+  end
+
+  def login(params) do
+    user = get(params)
+
+    cond do
+      user == nil ->
+        #Doing a false checkpw to prevent timing attacks
+        Comeonin.Bcrypt.checkpw("", Comeonin.Bcrypt.hashpwsalt(params["password"]))
+
+        {:not_found}
+      !Comeonin.Bcrypt.checkpw(params["password"], user.password) ->
+        {:not_found}
+      true ->
+        {:ok, user}
+    end
   end
 
   def insert(params) do
@@ -46,7 +69,7 @@ defmodule LiveBlog.User do
   end
 
   def update(id, params) do
-    changeset = LiveBlog.User.changeset(get(id), params)
+    changeset = LiveBlog.User.changeset(get_by_id(id), params)
      
     case changeset.valid? do
       false ->
@@ -61,7 +84,7 @@ defmodule LiveBlog.User do
   end
 
   def delete(id) do
-    user = get(id)
+    user = get_by_id(id)
     LiveBlog.Repo.delete(user)
   end
 end

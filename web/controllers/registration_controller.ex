@@ -1,4 +1,4 @@
-defmodule LiveBlog.AuthController do
+defmodule LiveBlog.RegistrationController do
   use LiveBlog.Web, :controller
 
   plug :action

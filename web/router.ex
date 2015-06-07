@@ -17,8 +17,12 @@ defmodule LiveBlog.Router do
 
     get "/", PageController, :index
 
-    get "/sign/up", AuthController, :index
-    post "/sign/up", AuthController, :create
+    get   "/sign/up",   RegistrationController, :index
+    post  "/sign/up",   RegistrationController, :create
+
+    get   "/sign/in",   SessionController, :index
+    post  "/sign/in",   SessionController, :create
+    get   "/sign/out",  SessionController, :destroy
   end
 
   # Other scopes may use custom stacks.

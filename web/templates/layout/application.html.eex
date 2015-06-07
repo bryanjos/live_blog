@@ -15,7 +15,12 @@
     <div class="container" role="main">
       <div class="header">
         <ul class="nav nav-pills pull-right">
-          <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
+          <%= case logged_in?(@conn) do %>
+            <% true -> %>
+              <li><a href="/sign/out">Log out</a></li>
+            <% _ -> %>
+              <li><a href="/sign/up">Sign Up</a></li>
+          <% end %>
         </ul>
         <span class="logo"></span>
       </div>
