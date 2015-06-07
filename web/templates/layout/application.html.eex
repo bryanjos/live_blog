@@ -20,6 +20,7 @@
               <li><a href="/sign/out">Log out</a></li>
             <% _ -> %>
               <li><a href="/sign/up">Sign Up</a></li>
+              <li><a href="/sign/in">Sign In</a></li>
           <% end %>
         </ul>
         <span class="logo"></span>
