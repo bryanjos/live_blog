@@ -2,6 +2,7 @@ defmodule LiveBlog.RegistrationController do
   use LiveBlog.Web, :controller
 
   plug :action
+  plug :scrub_params, "user" when action in [:create]
 
   def index(conn, _params) do
     render conn, "index.html", %{user: %{}}
