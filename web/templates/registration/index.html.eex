@@ -2,7 +2,7 @@
   <%= form_tag("/sign/up", method: :post) %>
     <div>
       <label>Username</label>
-      <input name="username" type="text" />
+      <input name="username" type="text" value="<%=Map.get(@user,"username")%>"/>
     </div>
 
     <div>
@@ -12,7 +12,7 @@
 
     <div>
       <label>Email</label>
-      <input name="email" type="text" />
+      <input name="email" type="text" value="<%=Map.get(@user, "email")%>"/>
     </div>
 
     <button type="submit">Submit</button>

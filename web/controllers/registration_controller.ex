@@ -4,7 +4,7 @@ defmodule LiveBlog.RegistrationController do
   plug :action
 
   def index(conn, _params) do
-    render conn, "index.html"
+    render conn, "index.html", %{user: %{}}
   end
 
   def create(conn, params) do
@@ -20,11 +20,11 @@ defmodule LiveBlog.RegistrationController do
         end)
         |> Enum.join(". ")
 
-        conn 
+        conn
         |> put_flash(:error, message)
-        |> render("index.html", %{})
+        |> render("index.html", %{user: params})
       {:ok, user} ->
-        conn 
+        conn
         |> put_session(:user_id, user.id)
         |> put_flash(:success, "Registration successful")
         |> redirect to: "/"
