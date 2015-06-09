@@ -8,7 +8,8 @@ defmodule LiveBlog.RegistrationController do
   end
 
   def create(conn, params) do
-    case LiveBlog.User.insert(params) do
+    user = Map.get(params, "user")
+    case LiveBlog.User.insert(user) do
       {:error, messages} ->
         message = Enum.map(messages, fn({field, message}) ->
           case message do
@@ -22,7 +23,7 @@ defmodule LiveBlog.RegistrationController do
 
         conn
         |> put_flash(:error, message)
-        |> render("index.html", %{user: params})
+        |> render("index.html", %{user: user})
       {:ok, user} ->
         conn
         |> put_session(:user_id, user.id)
