@@ -28,6 +28,17 @@
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+      <% validation_errors = get_flash(@conn, :validation_error) %>
+      <%= if validation_errors do %>
+        <div class="alert alert-danger" role="alert">
+          <ul>
+            <%= for message <- get_flash(@conn, :validation_error) do %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
 
       <%= @inner %>
 

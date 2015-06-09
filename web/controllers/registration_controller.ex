@@ -10,19 +10,19 @@ defmodule LiveBlog.RegistrationController do
   def create(conn, params) do
     user = Map.get(params, "user")
     case LiveBlog.User.insert(user) do
-      {:error, messages} ->
-        message = Enum.map(messages, fn({field, message}) ->
+      {:error, errors} ->
+        messages = Enum.map(errors, fn({field, message}) ->
+          field = Atom.to_string(field) |> String.capitalize
           case message do
             {text, count} ->
-              "#{field} should be at least #{count} characters"
+              "#{field} should be at least #{count} characters."
             _ ->
-              "#{field} #{message}"
+              "#{field} #{message}."
           end
         end)
-        |> Enum.join(". ")
 
         conn
-        |> put_flash(:error, message)
+        |> put_flash(:validation_error, messages)
         |> render("index.html", %{user: user})
       {:ok, user} ->
         conn
