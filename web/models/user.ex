@@ -27,6 +27,7 @@ defmodule LiveBlog.User do
     |> validate_length(:password, min: 8)
     |> validate_unique(:username, on: LiveBlog.Repo)
     |> validate_unique(:email, on: LiveBlog.Repo)
+    |> validate_confirmation(:password)
   end
 
   def get_by_id(id) do
@@ -70,7 +71,7 @@ defmodule LiveBlog.User do
 
   def update(id, params) do
     changeset = LiveBlog.User.changeset(get_by_id(id), params)
-     
+
     case changeset.valid? do
       false ->
         {:error, changeset.errors}
