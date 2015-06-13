@@ -30,33 +30,6 @@ defmodule LiveBlog.User do
     |> validate_confirmation(:password)
   end
 
-  def get_by_id(id) do
-    LiveBlog.Repo.get(LiveBlog.User, id)
-  end
-
-  def get(params) do
-    query = from u in LiveBlog.User,
-            where: u.username == ^params["username"] or u.email == ^params["username"],
-            select: u
-    LiveBlog.Repo.one(query)
-  end
-
-  def login(params) do
-    user = get(params)
-
-    cond do
-      user == nil ->
-        #Doing a false checkpw to prevent timing attacks
-        Comeonin.Bcrypt.checkpw("", Comeonin.Bcrypt.hashpwsalt(params["password"]))
-
-        {:not_found}
-      !Comeonin.Bcrypt.checkpw(params["password"], user.password) ->
-        {:not_found}
-      true ->
-        {:ok, user}
-    end
-  end
-
   def insert(params) do
     changeset = LiveBlog.User.changeset(%LiveBlog.User{}, params)
 
@@ -64,20 +37,22 @@ defmodule LiveBlog.User do
       false ->
         {:error, changeset.errors}
       _ ->
-        changeset = update_change(changeset, :password, &Comeonin.Bcrypt.hashpwsalt(&1))
+        changeset = update_change(changeset, :password, &LiveBlog.Auth.encrypt_password(&1))
         {:ok, LiveBlog.Repo.insert(changeset) }
     end
   end
 
   def update(id, params) do
-    changeset = LiveBlog.User.changeset(get_by_id(id), params)
+    changeset = LiveBlog.User
+    |> LiveBlog.Repo.get(id)
+    |> LiveBlog.User.changeset(params)
 
     case changeset.valid? do
       false ->
         {:error, changeset.errors}
       _ ->
         if get_change(changeset, :password, nil) do
-          changeset = update_change(changeset, :password, &Comeonin.Bcrypt.hashpwsalt(&1))
+          changeset = update_change(changeset, :password, &LiveBlog.Auth.encrypt_password(&1))
         end
 
         {:ok, LiveBlog.Repo.update(changeset) }
@@ -85,7 +60,8 @@ defmodule LiveBlog.User do
   end
 
   def delete(id) do
-    user = get_by_id(id)
-    LiveBlog.Repo.delete(user)
+    LiveBlog.User
+    |> LiveBlog.Repo.get(id)
+    |> LiveBlog.Repo.delete
   end
 end

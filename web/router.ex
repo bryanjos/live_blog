@@ -8,12 +8,25 @@ defmodule LiveBlog.Router do
     plug :protect_from_forgery
   end
 
+  def logged_in(conn, opts) do
+    case Plug.Conn.get_session(conn, :user_id) do
+      nil ->
+        Plug.Conn.send_resp(conn, 401, "Unauthorized")
+      _ ->
+        conn
+    end
+  end
+
+  pipeline :secure do
+    plug :logged_in, %{}
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/", LiveBlog do
-    pipe_through :browser # Use the default browser stack
+    pipe_through :browser
 
     get "/", PageController, :index
 
@@ -23,6 +36,12 @@ defmodule LiveBlog.Router do
     get   "/sign/in",   SessionController, :index
     post  "/sign/in",   SessionController, :create
     get   "/sign/out",  SessionController, :destroy
+  end
+
+  scope "/", LiveBlog do
+    pipe_through [:browser, :secure]
+
+    get "/dashboard", DashboardController, :index
   end
 
   # Other scopes may use custom stacks.

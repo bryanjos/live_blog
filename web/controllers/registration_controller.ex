@@ -23,13 +23,14 @@ defmodule LiveBlog.RegistrationController do
         end)
 
         conn
+        |> put_status(401)
         |> put_flash(:validation_error, messages)
         |> render("index.html", %{user: user})
       {:ok, user} ->
         conn
         |> put_session(:user_id, user.id)
         |> put_flash(:success, "Registration successful")
-        |> redirect to: "/"
+        |> redirect to: "/dashboard"
     end
   end
 end
