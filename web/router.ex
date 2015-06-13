@@ -8,7 +8,7 @@ defmodule LiveBlog.Router do
     plug :protect_from_forgery
   end
 
-  def logged_in(conn, opts) do
+  def logged_in(conn, _opts) do
     case Plug.Conn.get_session(conn, :user_id) do
       nil ->
         Plug.Conn.send_resp(conn, 401, "Unauthorized")

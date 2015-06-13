@@ -12,7 +12,7 @@ defmodule LiveBlog.SessionControllerTest do
   end
 
   test "POST /sign/in - valid" do
-    conn = post conn(), "/sign/up", %{"user" => %{ "username" => "test", "password" => "testtest", "email" => "test@example.com" } }
+    post conn(), "/sign/up", %{"user" => %{ "username" => "test", "password" => "testtest", "email" => "test@example.com" } }
 
     conn = post conn(), "/sign/in", %{ "username" => "test", "password" => "testtest"}
     assert redirected_to(conn) =~ "/dashboard"

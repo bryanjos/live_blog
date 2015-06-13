@@ -7,8 +7,8 @@ defmodule LiveBlog.SessionController do
     render conn, "index.html"
   end
 
-  def create(conn, params) do
-    case LiveBlog.Auth.login(params["username"], params["password"]) do
+  def create(conn, %{"username" => username, "password" => password}) do
+    case LiveBlog.Auth.login(username, password) do
       :not_found ->
         conn 
         |> put_status(401)

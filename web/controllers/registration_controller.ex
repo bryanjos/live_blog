@@ -15,7 +15,7 @@ defmodule LiveBlog.RegistrationController do
         messages = Enum.map(errors, fn({field, message}) ->
           field = Atom.to_string(field) |> String.capitalize
           case message do
-            {text, count} ->
+            {_text, count} ->
               "#{field} should be at least #{count} characters."
             _ ->
               "#{field} #{message}."
