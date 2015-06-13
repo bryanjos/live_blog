@@ -1,0 +1,18 @@
+defmodule LiveBlog.BlogTest do
+  use LiveBlog.ModelCase
+
+  alias LiveBlog.Blog
+
+  @valid_attrs %{name: "some content", slug: "some content", user: nil}
+  @invalid_attrs %{}
+
+  test "changeset with valid attributes" do
+    changeset = Blog.changeset(%Blog{}, @valid_attrs)
+    assert changeset.valid?
+  end
+
+  test "changeset with invalid attributes" do
+    changeset = Blog.changeset(%Blog{}, @invalid_attrs)
+    refute changeset.valid?
+  end
+end

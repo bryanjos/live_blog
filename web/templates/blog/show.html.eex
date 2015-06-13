@@ -1,0 +1,22 @@
+<h2>Show blog</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @blog.name %>
+  </li>
+
+  <li>
+    <strong>Slug:</strong>
+    <%= @blog.slug %>
+  </li>
+
+  <li>
+    <strong>User:</strong>
+    <%= @blog.user %>
+  </li>
+
+</ul>
+
+<%= link "Back", to: blog_path(@conn, :index) %>

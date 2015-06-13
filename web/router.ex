@@ -38,10 +38,12 @@ defmodule LiveBlog.Router do
     get   "/sign/out",  SessionController, :destroy
   end
 
-  scope "/", LiveBlog do
+  scope "/dashboard", LiveBlog do
     pipe_through [:browser, :secure]
 
-    get "/dashboard", DashboardController, :index
+    get "/", DashboardController, :index
+    
+    resources "/blogs", BlogController
   end
 
   # Other scopes may use custom stacks.
