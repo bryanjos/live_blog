@@ -28,15 +28,22 @@ defmodule LiveBlog.Blog do
     |> validate_unique(:slug, scope: [:user_id], on: LiveBlog.Repo)
   end
 
+  def get(user_id, id) do
+    query = from blog in LiveBlog.Blog,
+        where: blog.user_id == ^user_id and blog.id == ^id,
+        select: blog
+    blog = LiveBlog.Repo.one(query)
+  end
+
   def list(user_id) do
     query = from blog in LiveBlog.Blog,
             where: blog.user_id == ^user_id,
             select: blog
-    user = LiveBlog.Repo.one(query)
+    LiveBlog.Repo.all(query)
   end
 
-  def insert(user_id, %{ "name" => name, "slug" => slug }) do
-    changeset = LiveBlog.Blog.changeset(%LiveBlog.Blog{}, Map.put(params, "user_id", user_id))
+  def insert(user_id, params) do
+    changeset = LiveBlog.Blog.changeset(%LiveBlog.Blog{user_id: user_id}, params)
 
     case changeset.valid? do
       false ->
@@ -46,22 +53,32 @@ defmodule LiveBlog.Blog do
     end
   end
 
-  def update(id, %{ "name" => name, "slug" => slug }) do
-    changeset = LiveBlog.Blog
-    |> LiveBlog.Repo.get(id)
-    |> LiveBlog.Blog.changeset(params)
+  def update(user_id, id, params) do
+    blog = get(user_id, id)
 
-    case changeset.valid? do
-      false ->
-        {:error, changeset.errors}
+    case blog do
+      nil ->
+        {:error, [blog: "Blog not found"]}
       _ ->
-        {:ok, LiveBlog.Repo.update(changeset) }
+        changeset = LiveBlog.Blog.changeset(blog, params)
+
+        case changeset.valid? do
+          false ->
+            {:error, changeset.errors}
+          _ ->
+            {:ok, LiveBlog.Repo.update(changeset) }
+        end       
     end
   end
 
-  def delete(id) do
-    LiveBlog.Blog
-    |> LiveBlog.Repo.get(id)
-    |> LiveBlog.Repo.delete
+  def delete(user_id, id) do
+    blog = get(user_id, id)
+
+    case blog do
+      nil ->
+        {:error, [blog: "Blog not found"]}
+      _ ->
+        LiveBlog.Repo.delete(blog)     
+    end
   end
 end

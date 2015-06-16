@@ -2,66 +2,57 @@ defmodule LiveBlog.BlogController do
   use LiveBlog.Web, :controller
 
   alias LiveBlog.Blog
-
-  plug :scrub_params, "blog" when action in [:create, :update]
   plug :action
 
   def index(conn, _params) do
     user_id = get_session(conn, :user_id)
-    render(conn, "index.html", blogs: Blog.list(user_id))
+    render(conn, "blogs.json", blogs: Blog.list(user_id))
   end
 
-  def new(conn, _params) do
-    changeset = Blog.changeset(%Blog{})
-    render(conn, "new.html", changeset: changeset)
-  end
+  def create(conn, params) do
+    user_id = get_session(conn, :user_id)
 
-  def create(conn, %{"blog" => blog_params}) do
-    changeset = Blog.changeset(%Blog{}, blog_params)
-
-    if changeset.valid? do
-      Repo.insert(changeset)
-
-      conn
-      |> put_flash(:info, "Blog created successfully.")
-      |> redirect(to: blog_path(conn, :index))
-    else
-      render(conn, "new.html", changeset: changeset)
+    case Blog.insert(user_id, params) do
+      {:error, messages} ->
+        conn
+        |> put_status(400)
+        |> render("errors.json", errors: format_errors(messages))
+      {:ok, blog} ->
+        render(conn, "blogs.json", blogs: [blog])
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    blog = Repo.get(Blog, id)
-    render(conn, "show.html", blog: blog)
-  end
+  def update(conn, params) do
+    user_id = get_session(conn, :user_id)
 
-  def edit(conn, %{"id" => id}) do
-    blog = Repo.get(Blog, id)
-    changeset = Blog.changeset(blog)
-    render(conn, "edit.html", blog: blog, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "blog" => blog_params}) do
-    blog = Repo.get(Blog, id)
-    changeset = Blog.changeset(blog, blog_params)
-
-    if changeset.valid? do
-      Repo.update(changeset)
-
-      conn
-      |> put_flash(:info, "Blog updated successfully.")
-      |> redirect(to: blog_path(conn, :index))
-    else
-      render(conn, "edit.html", blog: blog, changeset: changeset)
+    case Blog.update(user_id, params["id"], params) do
+      {:error, messages} ->
+        conn
+        |> put_status(400)
+        |> render("errors.json", errors: format_errors(messages))
+      {:ok, blog} ->
+        render(conn, "blogs.json", blogs: [blog])
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    blog = Repo.get(Blog, id)
-    Repo.delete(blog)
+    get_session(conn, :user_id)
+    |> Blog.delete(id)
 
-    conn
-    |> put_flash(:info, "Blog deleted successfully.")
-    |> redirect(to: blog_path(conn, :index))
+    conn 
+    |> put_status(204)
   end
+
+  defp format_errors(messages) do
+    Enum.map(messages, fn({field, message}) ->
+      capitalized_field = Atom.to_string(field) |> String.capitalize
+      case message do
+        {_text, count} ->
+          %{ field: field, message: "#{capitalized_field} should be at least #{count} characters." }
+        _ ->
+          %{ field: field, message: message }
+      end
+    end)
+  end
+  
 end
