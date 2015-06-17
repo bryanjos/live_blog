@@ -8,8 +8,7 @@ defmodule LiveBlog.RegistrationController do
     render conn, "index.html", %{user: %{}}
   end
 
-  def create(conn, params) do
-    user = Map.get(params, "user")
+  def create(conn, %{ "user" => user }) do
     case LiveBlog.User.insert(user) do
       {:error, errors} ->
         messages = Enum.map(errors, fn({field, message}) ->

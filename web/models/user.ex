@@ -6,6 +6,7 @@ defmodule LiveBlog.User do
     field :email, :string
     field :password, :string
     field :isAdmin, :boolean, default: false
+    has_many :blogs, LiveBlog.Blog
 
     timestamps
   end

@@ -23,6 +23,7 @@ defmodule LiveBlog.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   scope "/", LiveBlog do
@@ -38,14 +39,16 @@ defmodule LiveBlog.Router do
     get   "/sign/out",  SessionController, :destroy
   end
 
-  scope "/", LiveBlog do
+  scope "/dashboard", LiveBlog do
     pipe_through [:browser, :secure]
 
-    get "/dashboard", DashboardController, :index
+    get "/", DashboardController, :index
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", LiveBlog do
-  #   pipe_through :api
-  # end
+  scope "/api", LiveBlog do
+    pipe_through [:api, :secure]
+
+    resources "/blogs", BlogController, only: [:index, :create, :update, :delete]
+   end
 end
