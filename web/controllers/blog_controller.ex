@@ -2,7 +2,6 @@ defmodule LiveBlog.BlogController do
   use LiveBlog.Web, :controller
 
   alias LiveBlog.Blog
-  plug :action
 
   def index(conn, _params) do
     user_id = get_session(conn, :user_id)
